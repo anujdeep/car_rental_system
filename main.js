@@ -1,127 +1,57 @@
-/*
-	Road Trip by TEMPLATED
-	templated.co @templatedco
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
-*/
 
-(function($) {
-
-	skel.breakpoints({
-		xlarge:	'(max-width: 1680px)',
-		large:	'(max-width: 1280px)',
-		medium:	'(max-width: 980px)',
-		small:	'(max-width: 736px)',
-		xsmall:	'(max-width: 480px)'
-	});
-
-	$(function() {
-
-		var	$window = $(window),
-			$body = $('body'),
-			$header = $('#header'),
-			$banner = $('#banner');
-
-		var $height = $('#header').height();
-
-		// Disable animations/transitions until the page has loaded.
-			$body.addClass('is-loading');
-
-			$window.on('load', function() {
-				window.setTimeout(function() {
-					$body.removeClass('is-loading');
-				}, 100);
-			});
-
-		// Fix: Placeholder polyfill.
-			$('form').placeholder();
-
-		// Prioritize "important" elements on medium.
-			skel.on('+medium -medium', function() {
-				$.prioritize(
-					'.important\\28 medium\\29',
-					skel.breakpoint('medium').active
-				);
-			});
-
-		// Banner
-
-			if ($banner.length > 0) {
-
-				// IE: Height fix.
-					if (skel.vars.browser == 'ie'
-					&&	skel.vars.IEVersion > 9) {
-
-						skel.on('-small !small', function() {
-							$banner.css('height', '100vh');
-						});
-
-						skel.on('+small', function() {
-							$banner.css('height', '');
-						});
-
-					}
-
-				// More button.
-					$banner.find('.more')
-						.addClass('scrolly');
-
-			}
+(function ($) {
+    "use strict";
 
 
-		// Get BG Image
+    /*==================================================================
+    [ Validate ]*/
+    var input = $('.validate-input .input100');
 
-			if ( $( ".bg-img" ).length ) {
+    $('.validate-form').on('submit',function(){
+        var check = true;
 
-				$( ".bg-img" ).each(function() {
+        for(var i=0; i<input.length; i++) {
+            if(validate(input[i]) == false){
+                showValidate(input[i]);
+                check=false;
+            }
+        }
 
-					var post 	= $(this),
-						bg 		= post.data('bg');
-
-					post.css( 'background-image', 'url(images/' + bg + ')' );
-
-				});
+        return check;
+    });
 
 
-			}
+    $('.validate-form .input100').each(function(){
+        $(this).focus(function(){
+           hideValidate(this);
+        });
+    });
 
-		// Posts
+    function validate (input) {
+        if($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
+            if($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) == null) {
+                return false;
+            }
+        }
+        else {
+            if($(input).val().trim() == ''){
+                return false;
+            }
+        }
+    }
 
-			$( ".post" ).each( function() {
-				var p = $(this),
-					i = p.find('.inner'),
-					m = p.find('.more');
+    function showValidate(input) {
+        var thisAlert = $(input).parent();
 
-				m.addClass('scrolly');
+        $(thisAlert).addClass('alert-validate');
+    }
 
-				p.scrollex({
-					top: '40vh',
-					bottom: '40vh',
-					terminate: 	function() { m.removeClass('current'); i.removeClass('current'); },
-					enter: 		function() { m.addClass('current'); i.addClass('current'); },
-					leave: 		function() { m.removeClass('current'); i.removeClass('current'); }
-				});
+    function hideValidate(input) {
+        var thisAlert = $(input).parent();
 
-			});
-
-		// Scrolly.
-			if ( $( ".scrolly" ).length ) {
-
-				$('.scrolly').scrolly();
-			}
-
-		// Menu.
-			$('#menu')
-				.append('<a href="#menu" class="close"></a>')
-				.appendTo($body)
-				.panel({
-					delay: 500,
-					hideOnClick: true,
-					hideOnSwipe: true,
-					resetScroll: true,
-					resetForms: true,
-					side: 'right'
-				});
-
-	});
+        $(thisAlert).removeClass('alert-validate');
+    }
+    
+    
 
 })(jQuery);
